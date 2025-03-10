@@ -1,0 +1,1 @@
+gcc mainfilefornow.cpp -lstdc++
