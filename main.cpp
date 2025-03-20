@@ -3,6 +3,11 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include <variant>
+
+void ShowException() {
+    
+}
 
 class NeanderthalInterpreter {
 public:
@@ -38,9 +43,9 @@ public:
                 std::string varName;
                 stream >> varName;
                 if (int_variables.find(varName) != int_variables.end()) {
-                    std::cout << int_variables[varName] << std::endl;
+                    std::cout << std::get<int>(int_variables[varName]) << std::endl;
                 } else if (str_variables.find(varName) != str_variables.end()) {
-                    std::cout << str_variables[varName] << std::endl;
+                    std::cout << std::get<std::string>(str_variables[varName]) << std::endl;
                 } else {
                     std::cout << "Var " << varName << " not found" << std::endl;
                 }
@@ -51,8 +56,7 @@ public:
                     int input;
                     std::cin >> input;
                     int_variables[var_name] = input;
-                }
-                else if (var_type == "str") {
+                } else if (var_type == "str") {
                     std::string input;
                     std::cin >> input;
                     str_variables[var_name] = input;
@@ -61,8 +65,8 @@ public:
                 std::string varName1, varName2, condition;
                 stream >> varName1 >> condition >> varName2;
                 if (int_variables.find(varName1) != int_variables.end() && int_variables.find(varName2) != int_variables.end()) {
-                    int var1 = int_variables[varName1];
-                    int var2 = int_variables[varName2];
+                    int var1 = std::get<int>(int_variables[varName1]);
+                    int var2 = std::get<int>(int_variables[varName2]);
                     if (condition == "==") {
                         std::cout << (var1 == var2 ? "True" : "False") << std::endl;
                     } else if (condition == "!=") {
@@ -88,8 +92,9 @@ public:
     }
 
 private:
-    std::unordered_map<std::string, int> int_variables ;
-    std::unordered_map<std::string, std::string> str_variables;
+    using VarType = std::variant<int, std::string>;
+    std::unordered_map<std::string, VarType> int_variables;
+    std::unordered_map<std::string, VarType> str_variables;
 };
 
 int main(int argc, char* argv[]) {
