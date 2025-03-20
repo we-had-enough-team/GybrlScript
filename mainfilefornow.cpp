@@ -4,15 +4,6 @@
 #include <string>
 #include <unordered_map>
 
-/*
-Абырвалгвывыв [текст который надо вывести]
-Гыгыварлб [число которое надо вывести]
-СЛОЖИ [число 1] [число 2]
-УМНОЖЬ [число 1] [число 2]
-ПРИСВИ [название переменной] [значение]
-ПОЛУЧИ [название переменной]
-*/
-
 class NeanderthalInterpreter {
 public:
     void interpret(const std::string& code) {
@@ -20,56 +11,96 @@ public:
         std::string command;
 
         while (stream >> command) {
-            if (command == "Абырвалгвывыв") {
+            if (command == "printline") {
                 std::string say;
                 stream >> say;
-                std::cout << say << std::endl;
-            } else if (command == "Гыгыварлб") {
-                int number;
-                stream >> number;
-                std::cout << number << std::endl;
-            } else if (command == "СЛОЖИ") {
+                std::cout << say;
+            } else if (command == "newline") {
+                std::cout << std::endl;
+            } else if (command == "sum") {
                 int num1, num2;
                 stream >> num1 >> num2;
                 std::cout << (num1 + num2) << std::endl;
-            } else if (command == "УМНОЖЬ") {
+            } else if (command == "multiply") {
                 int num1, num2;
                 stream >> num1 >> num2;
                 std::cout << (num1 * num2) << std::endl;
-            } else if (command == "ПРИСВИ") {
-                std::string varName;
-                int value;
-                stream >> varName >> value;
-                variables[varName] = value;
-            } else if (command == "ПОЛУЧИ") {
+            } else if (command == "set") {
+                std::string varType, varName;
+                std::string value;
+                stream >> varType >> varName >> value;
+                if (varType == "int") {
+                    int_variables[varName] = std::stoi(value);
+                } else if (varType == "str") {
+                    str_variables[varName] = value;
+                }
+            } else if (command == "get") {
                 std::string varName;
                 stream >> varName;
-                if (variables.find(varName) != variables.end()) {
-                    std::cout << variables[varName] << std::endl;
+                if (int_variables.find(varName) != int_variables.end()) {
+                    std::cout << int_variables[varName] << std::endl;
+                } else if (str_variables.find(varName) != str_variables.end()) {
+                    std::cout << str_variables[varName] << std::endl;
                 } else {
-                    std::cout << "Переменная не найдена: " << varName << std::endl;
+                    std::cout << "Var " << varName << " not found" << std::endl;
                 }
-            } else if (command == "слухай_суда_бл") {
-                std::cin;
+            } else if (command == "getline") {
+                std::string var_name, var_type;
+                stream >> var_type >> var_name;
+                if (var_type == "int") {
+                    int input;
+                    std::cin >> input;
+                    int_variables[var_name] = input;
+                }
+                else if (var_type == "str") {
+                    std::string input;
+                    std::cin >> input;
+                    str_variables[var_name] = input;
+                }
+            } else if (command == "if") {
+                std::string varName1, varName2, condition;
+                stream >> varName1 >> condition >> varName2;
+                if (int_variables.find(varName1) != int_variables.end() && int_variables.find(varName2) != int_variables.end()) {
+                    int var1 = int_variables[varName1];
+                    int var2 = int_variables[varName2];
+                    if (condition == "==") {
+                        std::cout << (var1 == var2 ? "True" : "False") << std::endl;
+                    } else if (condition == "!=") {
+                        std::cout << (var1 != var2 ? "True" : "False") << std::endl;
+                    } else if (condition == "<") {
+                        std::cout << (var1 < var2 ? "True" : "False") << std::endl;
+                    } else if (condition == ">") {
+                        std::cout << (var1 > var2 ? "True" : "False") << std::endl;
+                    } else if (condition == "<=") {
+                        std::cout << (var1 <= var2 ? "True" : "False") << std::endl;
+                    } else if (condition == ">=") {
+                        std::cout << (var1 >= var2 ? "True" : "False") << std::endl;
+                    } else {
+                        std::cout << "Invalid condition" << std::endl;
+                    }
+                } else {
+                    std::cout << "One or both variables not found" << std::endl;
+                }
             } else {
-                std::cout << "Неизвестная команда: " << command << std::endl;
+                std::cout << "Exception -> command : " << command << " not found." << std::endl;
             }
         }
     }
 
 private:
-    std::unordered_map<std::string, int> variables;
+    std::unordered_map<std::string, int> int_variables ;
+    std::unordered_map<std::string, std::string> str_variables;
 };
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cerr << "Использование: " << argv[0] << " <имя_файла>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <file name>" << std::endl;
         return 1;
     }
 
     std::ifstream file(argv[1]);
     if (!file.is_open()) {
-        std::cerr << "Не удалось открыть файл: " << argv[1] << std::endl;
+        std::cerr << "Exception while loading file: " << argv[1] << std::endl;
         return 1;
     }
 
