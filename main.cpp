@@ -1,13 +1,73 @@
 #include <iostream>
 #include <fstream>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <variant>
 
-void ShowException() {
-    
+bool SkipERRS = false;
+
+void ShowException(std::string cmdn, std::string reason, int warnlvl, bool& skipWarnings) {
+    switch (warnlvl) {
+        case 1: {
+            if (skipWarnings) {
+                return;
+            }
+
+            std::string choise_run = "N";
+            std::cout << std::endl
+                      << "The '" << cmdn << "' command caused a non-critical error in the program."
+                      << std::endl << "Reason: " << reason << std::endl
+                      << "Continue program execution? [N(no)|Y(yes)|A(always)] #>> ";
+            std::cin >> choise_run;
+
+            if (choise_run == "A") {
+                skipWarnings = true;
+                return;
+            } else if (choise_run != "Y") {
+                choise_run = "N";
+            }
+
+            if (choise_run == "N") {
+                std::cerr << "Program terminated due to error." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            break;
+        }
+        case 2: {
+            std::string choise_run = "N";
+            std::cout << std::endl
+                      << "The '" << cmdn << "' command caused a warning."
+                      << std::endl << "Reason: " << reason << std::endl
+                      << "It is strongly recommended not to continue program execution." << std::endl
+                      << "Continue program execution? [N(no)|Y(yes)] #>> ";
+            std::cin >> choise_run;
+
+            if (choise_run != "Y") {
+                choise_run = "N";
+            }
+
+            if (choise_run == "N") {
+                std::cerr << "Program terminated due to warning." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+            break;
+        }
+        case 3: {
+            std::cout << std::endl
+                      << "Critical error occurred with the '" << cmdn << "' command."
+                      << std::endl << "Reason: " << reason << std::endl
+                      << "The program may behave unpredictably. Exiting now." << std::endl;
+            exit(EXIT_FAILURE);
+            break;
+        }
+        default:
+            std::cout << "Unknown warning level: " << warnlvl << std::endl;
+            break;
+    }
 }
+
 
 class NeanderthalInterpreter {
 public:
@@ -16,6 +76,11 @@ public:
         std::string command;
 
         while (stream >> command) {
+            if (command == ">>") {
+                std::string to_skip;
+                std::getline(stream, to_skip);
+                continue;
+            }
             if (command == "printline") {
                 std::string say;
                 stream >> say;

@@ -1,5 +1,6 @@
 printline HELLO_USER newline
-set str USR_NAME LOH
+>> comment test
+set str USR_NAME LOSHARA
 set int AGE 0
 set int REQUIRED_AGE_TO_PASS 16
 printline ENTER_UR_AGE printline #>> getline int AGE
