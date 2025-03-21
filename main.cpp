@@ -38,7 +38,7 @@ void ShowException(std::string cmdn, std::string reason, int warnlvl, bool& skip
         case 2: {
             std::string choise_run = "N";
             std::cout << std::endl
-                      << "The '" << cmdn << "' command caused a warning."
+                      << "The '" << cmdn << "' command caused a senior error in the program."
                       << std::endl << "Reason: " << reason << std::endl
                       << "It is strongly recommended not to continue program execution." << std::endl
                       << "Continue program execution? [N(no)|Y(yes)] #>> ";
@@ -49,7 +49,7 @@ void ShowException(std::string cmdn, std::string reason, int warnlvl, bool& skip
             }
 
             if (choise_run == "N") {
-                std::cerr << "Program terminated due to warning." << std::endl;
+                std::cerr << "Program terminated due to error." << std::endl;
                 exit(EXIT_FAILURE);
             }
             break;
@@ -148,10 +148,10 @@ public:
                         std::cout << "Invalid condition" << std::endl;
                     }
                 } else {
-                    std::cout << "One or both variables not found" << std::endl;
+                    ShowException("if statement", "Unexisting vars in int-var-container", 2, SkipERRS);
                 }
             } else {
-                std::cout << "Exception -> command : " << command << " not found." << std::endl;
+                ShowException(command, "Unknown command", 1, SkipERRS);
             }
         }
     }
@@ -170,6 +170,7 @@ int main(int argc, char* argv[]) {
 
     std::ifstream file(argv[1]);
     if (!file.is_open()) {
+        ShowException("File Loader", argv[1], 3, SkipERRS);;
         std::cerr << "Exception while loading file: " << argv[1] << std::endl;
         return 1;
     }

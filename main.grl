@@ -1,10 +1,10 @@
 printline HELLO_USER newline
->> comment test
+
 set str USR_NAME LOSHARA
 set int AGE 0
 set int REQUIRED_AGE_TO_PASS 16
 printline ENTER_UR_AGE printline #>> getline int AGE
-
+>> weirjoooooo
 printline DBG: get USR_NAME
 printline DBG: get AGE
 printline DBG: get REQUIRED_AGE_TO_PASS
