@@ -9,7 +9,7 @@ printline ENTER_UR_AGE printline #>> getline int AGE
 printline DBG: get USR_NAME
 printline DBG: get AGE
 printline DBG: get REQUIRED_AGE_TO_PASS
-
+>> exist for no reason
 if AGE > REQUIRED_AGE_TO_PASS then
 printline YOU_ARE_OLD_ENOUGH_TO_DRIVE newline
 else
