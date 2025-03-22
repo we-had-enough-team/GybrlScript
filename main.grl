@@ -15,3 +15,17 @@ printline YOU_ARE_OLD_ENOUGH_TO_DRIVE newline
 else
 printline YOU_ARE_NOT_OLD_ENOUGH_TO_DRIVE newline
 endif
+
+set int max_age 100
+
+if AGE > max_age then
+printline WHO_THE_FUCK_ARE_YOU newline
+endif
+
+set int min_age 1
+
+if AGE < min_age then
+printline GUGUGAGA newline
+else
+printline NO_GUGUGAGA newline
+endif
