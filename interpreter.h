@@ -6,6 +6,7 @@
 #include <variant>
 #include <functional>
 #include <sstream>
+#include <stack>
 
 class NeanderthalInterpreter {
 public:
@@ -15,7 +16,10 @@ private:
     using VarType = std::variant<int, std::string>;
     std::unordered_map<std::string, VarType> int_variables;
     std::unordered_map<std::string, VarType> str_variables;
-
+    bool PreviosIF = false;
+    bool NowInIF = false;
+    std::stack<bool> conditionStack;
+    bool SkipBlock = false;
     std::unordered_map<std::string, std::function<void(std::istringstream&)>> commandHandlers;
 };
 

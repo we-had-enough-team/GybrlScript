@@ -1,16 +1,17 @@
-reduce_error_catching
-printline <HELLO USER> newline
+>> prgm strt
+printline HELLO_USER newline
 
 set str USR_NAME LOSHARA
 set int AGE 0
 set int REQUIRED_AGE_TO_PASS 16
 printline ENTER_UR_AGE printline #>> getline int AGE
->> weirjoooooo
+>> да я ебал эту парашу
 printline DBG: get USR_NAME
 printline DBG: get AGE
 printline DBG: get REQUIRED_AGE_TO_PASS
 
-if AGE > REQUIRED_AGE_TO_PASS
-
-printline YOU_ARE_OLD
-printline YOU ARE YOUNG
+if AGE > REQUIRED_AGE_TO_PASS then
+printline YOU_ARE_OLD_ENOUGH_TO_DRIVE newline
+else
+printline YOU_ARE_NOT_OLD_ENOUGH_TO_DRIVE newline
+endif

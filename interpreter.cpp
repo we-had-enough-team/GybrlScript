@@ -10,20 +10,26 @@ void NeanderthalInterpreter::interpret(const std::string& code) {
         {"printline", [this](std::istringstream& stream) {
             std::string say;
             stream >> say;
-            std::cout << say;
+            if (!SkipBlock) {
+                std::cout << say;
+            }
         }},
         {"reduce_error_catching", [](std::istringstream&) { ReduceWarnings = true; SkipERRS = true; }},
         {"reduce_warnings", [](std::istringstream&) { SkipERRS = true; }},
-        {"newline", [](std::istringstream&) { std::cout << std::endl; }},
+        {"newline", [this](std::istringstream&) { if (!SkipBlock) std::cout << std::endl; }},
         {"sum", [this](std::istringstream& stream) {
             int num1, num2;
             stream >> num1 >> num2;
-            std::cout << (num1 + num2) << std::endl;
+            if (!SkipBlock) {
+                std::cout << (num1 + num2) << std::endl;
+            }
         }},
         {"multiply", [this](std::istringstream& stream) {
             int num1, num2;
             stream >> num1 >> num2;
-            std::cout << (num1 * num2) << std::endl;
+            if (!SkipBlock) {
+                std::cout << (num1 * num2) << std::endl;
+            }
         }},
         {"set", [this](std::istringstream& stream) {
             std::string varType, varName, value;
@@ -38,11 +44,17 @@ void NeanderthalInterpreter::interpret(const std::string& code) {
             std::string varName;
             stream >> varName;
             if (int_variables.find(varName) != int_variables.end()) {
-                std::cout << std::get<int>(int_variables[varName]) << std::endl;
+                if (!SkipBlock) {
+                    std::cout << std::get<int>(int_variables[varName]) << std::endl;
+                }
             } else if (str_variables.find(varName) != str_variables.end()) {
-                std::cout << std::get<std::string>(str_variables[varName]) << std::endl;
+                if (!SkipBlock) {
+                    std::cout << std::get<std::string>(str_variables[varName]) << std::endl;
+                }
             } else {
-                std::cout << "Var " << varName << " not found" << std::endl;
+                if (!SkipBlock) {
+                    std::cout << "Var " << varName << " not found" << std::endl;
+                }
             }
         }},
         {"getline", [this](std::istringstream& stream) {
@@ -59,29 +71,47 @@ void NeanderthalInterpreter::interpret(const std::string& code) {
             }
         }},
         {"if", [this](std::istringstream& stream) {
+            NowInIF = true;
             std::string varName1, varName2, condition;
             stream >> varName1 >> condition >> varName2;
             if (int_variables.find(varName1) != int_variables.end() && int_variables.find(varName2) != int_variables.end()) {
                 int var1 = std::get<int>(int_variables[varName1]);
                 int var2 = std::get<int>(int_variables[varName2]);
-                if (condition == "==") {
-                    std::cout << (var1 == var2 ? "True" : "False") << std::endl;
-                } else if (condition == "!=") {
-                    std::cout << (var1 != var2 ? "True" : "False") << std::endl;
-                } else if (condition == "<") {
-                    std::cout << (var1 < var2 ? "True" : "False") << std::endl;
-                } else if (condition == ">") {
-                    std::cout << (var1 > var2 ? "True" : "False") << std::endl;
-                } else if (condition == "<=") {
-                    std::cout << (var1 <= var2 ? "True" : "False") << std::endl;
-                } else if (condition == ">=") {
-                    std::cout << (var1 >= var2 ? "True" : "False") << std::endl;
-                } else {
-                    std::cout << "Invalid condition" << std::endl;
-                }
+                PreviosIF = (condition == "==" && var1 == var2) ||
+                            (condition == "!=" && var1 != var2) ||
+                            (condition == "<" && var1 < var2) ||
+                            (condition == ">" && var1 > var2) ||
+                            (condition == "<=" && var1 <= var2) ||
+                            (condition == ">=" && var1 >= var2);
+                SkipBlock = !PreviosIF;
             } else {
                 ShowException("if statement", "Unexisting vars in int-var-container", 3, SkipERRS);
             }
+        }},
+        {"then", [this](std::istringstream&) {
+            if (NowInIF == false) {
+                ShowException("then", "Missplaced 'then' ", 1, SkipERRS);
+            }
+        }},
+        {"elif", [this](std::istringstream&) {
+            if (NowInIF == false) {
+                ShowException("elif", "Missplaced 'elif' ", 1, SkipERRS);
+            } else { 
+                // i should do something here
+            }
+        }},
+        {"else", [this](std::istringstream&) {
+            if (NowInIF == false) {
+                ShowException("else", "Missplaced 'else' ", 1, SkipERRS);
+            }
+            SkipBlock = PreviosIF;
+        }},
+        {"endif", [this](std::istringstream&) {
+            if (NowInIF == false) {
+                ShowException("endif", "Missplaced 'endif' ", 1, SkipERRS);
+            }
+            NowInIF = false;
+            SkipBlock = false;
         }}
     };
 
