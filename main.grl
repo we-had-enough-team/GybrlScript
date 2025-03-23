@@ -1,31 +1,10 @@
->> prgm strt
-printline HELLO_USER newline
-
-set str USR_NAME LOSHARA
-set int AGE 0
-set int REQUIRED_AGE_TO_PASS 16
-printline ENTER_UR_AGE printline #>> getline int AGE
->> ahem, don't check what was there
-printline DBG: get USR_NAME
-printline DBG: get AGE
-printline DBG: get REQUIRED_AGE_TO_PASS
->> exist for no reason
-if AGE > REQUIRED_AGE_TO_PASS then
-printline YOU_ARE_OLD_ENOUGH_TO_DRIVE newline
+printline DO_YOU_WANT_EXECUTE_THIS_FILE_WITH_REDUCED_ERRORS_WARNINGS? newline
+set int answer 0
+printline [1-Yes,0-No(default)]#>> getline int answer
+set int tgt 1
+if answer == tgt then
+printline REDUCED
+reduce_error_catching
 else
-printline YOU_ARE_NOT_OLD_ENOUGH_TO_DRIVE newline
-endif
-
-set int max_age 100
-
-if AGE > max_age then
-printline WHO_THE_FUCK_ARE_YOU newline
-endif
-
-set int min_age 1
-
-if AGE < min_age then
-printline GUGUGAGA newline
-else
-printline NO_GUGUGAGA newline
+printline NORMAL
 endif

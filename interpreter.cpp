@@ -97,7 +97,7 @@ void NeanderthalInterpreter::interpret(const std::string& code) {
             if (NowInIF == false) {
                 ShowException("elif", "Missplaced 'elif' ", 1, SkipERRS);
             } else { 
-                // i should do something here
+
             }
         }},
         {"else", [this](std::istringstream&) {
@@ -112,7 +112,11 @@ void NeanderthalInterpreter::interpret(const std::string& code) {
             }
             NowInIF = false;
             SkipBlock = false;
-        }}
+        }}, {"free-ram", [this](std::istringstream&) {
+            int_variables.clear();
+            str_variables.clear();
+        }},
+
     };
 
     while (stream >> command) {
